@@ -83,7 +83,7 @@ const HomePage = () => {
                 <Box style={headerStyle}>
                     <Container maxWidth="xl">
                         <Grid container spacing={2}>
-                            <Grid xs={6}>
+                            <Grid xs={6} >
                                 <img src='images/meta.png' alt='meta_png' />
                                 <Typography variant='h6'>| Support Inbox</Typography>
                             </Grid>
@@ -132,10 +132,40 @@ const HomePage = () => {
                                 <Grid container>
                                     <Grid item xs={12} sm={6} md={2} lg={2}>
                                         <Typography variant='body1' component='h3'>Marketing on Facebook</Typography>
-                                        <List>
+                                        <List style={ulStyle}>
                                             <ListItem>
                                                 <ListItemText primary>
-                                                    <Typography variant='body1' component='span'>BBBBBBBBBBBBB</Typography>
+                                                    <Typography variant='body1' component='span'>A</Typography>
+                                                </ListItemText>
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText primary>
+                                                    <Typography variant='body1' component='span'>B</Typography>
+                                                </ListItemText>
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText primary>
+                                                    <Typography variant='body1' component='span'>C</Typography>
+                                                </ListItemText>
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText primary>
+                                                    <Typography variant='body1' component='span'>E</Typography>
+                                                </ListItemText>
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText primary>
+                                                    <Typography variant='body1' component='span'>D</Typography>
+                                                </ListItemText>
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText primary>
+                                                    <Typography variant='body1' component='span'>F</Typography>
+                                                </ListItemText>
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText primary>
+                                                    <Typography variant='body1' component='span'>D</Typography>
                                                 </ListItemText>
                                             </ListItem>
                                         </List>
