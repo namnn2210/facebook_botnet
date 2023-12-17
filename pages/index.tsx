@@ -62,7 +62,7 @@ const HomePage = () => {
         color: 'rgb(255, 255, 255)',
         position: 'absolute',
         textAlign: 'center',
-        top: '17%',
+        top: '18%',
         left: '0px',
         width: '100%',
         transform: 'translate(0px, -50%)',
