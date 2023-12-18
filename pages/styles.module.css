@@ -1,0 +1,9 @@
+.inner-circle::after {
+    border-top: .1rem solid #3b82f6;
+    content: "";
+    display: block;
+    left: 60px;
+    position: absolute;
+    top: .3125rem;
+    width: 4rem;
+}
