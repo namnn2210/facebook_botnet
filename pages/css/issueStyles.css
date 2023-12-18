@@ -1,0 +1,75 @@
+.inner-circle::after {
+    border-top: .1rem solid #3b82f6;
+    content: "";
+    display: block;
+    left: 60px;
+    position: absolute;
+    top: .3125rem;
+    width: 4rem;
+}
+
+.footer-modal {
+    padding-top: 15px;
+}
+
+.cancel-btn {
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: 0px;
+    margin: 0px 10px 0px 0px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    appearance: none;
+    text-decoration: none;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    min-width: 64px;
+    padding: 5px 24px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border: 1px solid rgb(0, 0, 0);
+    font-size: 15px;
+    text-transform: none;
+    color: rgb(0, 0, 0);
+    min-height: 40px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+}
+
+.submit-btn {
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    box-sizing: border-box;
+    outline: 0px;
+    border: 0px;
+    margin: 0px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    appearance: none;
+    text-decoration: none;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    min-width: 64px;
+    padding: 6px 26px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(25, 118, 210);
+    text-transform: none;
+    border-radius: 8px;
+    box-shadow: none;
+    position: relative;
+}

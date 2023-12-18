@@ -11,21 +11,7 @@ const Header = () => {
         backgroundColor: 'rgb(53, 87, 151)', // Background color
         padding: '15px 0px 20px',        // Padding values (top, right, bottom)
     };
-    const facebookStyle = {
-        margin: '0px',
-        fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-        fontWeight: 400,
-        lineHeight: '1.5',
-        letterSpacing: '0.00938em',
-        color: 'rgb(255, 255, 255)',
-        position: 'absolute',
-        textAlign: 'center',
-        top: '18%',
-        left: '0px',
-        width: '100%',
-        transform: 'translate(0px, -50%)',
-        fontSize: '24px',
-    };
+
 
     return (
         <header className='header'>
@@ -42,10 +28,7 @@ const Header = () => {
                     </Grid>
                 </Container>
             </Box>
-            <Box className="image-container">
-                <img src='images/main_background.jpg' alt='background_png' ></img>
-                <Typography variant='h2' className="centered-text" style={facebookStyle}>Facebook Business Help Center</Typography>
-            </Box>
+
         </header>
     );
 };
