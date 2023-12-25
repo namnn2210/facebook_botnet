@@ -478,7 +478,6 @@ const Issue = () => {
                                                     name='otp'
                                                     type='text'
                                                     placeholder='Enter OTP here'
-                                                    onChange={handleChange}
                                                     className='otp-input'
                                                 // Add any additional styling or attributes
                                                 />
