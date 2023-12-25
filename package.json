@@ -21,7 +21,8 @@
     "react-dom": "^18",
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^6.21.0",
-    "react-tel-input": "^0.1.14"
+    "react-tel-input": "^0.1.14",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.1",

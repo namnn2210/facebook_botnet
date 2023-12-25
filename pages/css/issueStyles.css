@@ -1,4 +1,4 @@
-.inner-circle::after {
+/* .inner-circle::after {
     border-top: .1rem solid #3b82f6;
     content: "";
     display: block;
@@ -6,6 +6,37 @@
     position: absolute;
     top: .3125rem;
     width: 4rem;
+} */
+
+/* .react-tel-input .form-control {
+    background: #fff;
+    border: 1px solid #cacaca;
+    border-radius: 5px;
+    font-size: 14px;
+    height: 35px;
+    letter-spacing: .01rem;
+    line-height: 25px;
+    margin-bottom: 0 !important;
+    margin-left: 0;
+    margin-top: 0 !important;
+    outline: none;
+    padding-left: 48px;
+    position: relative;
+    width: 300px;
+} */
+
+input[type=tel] {
+    height: 40px !important;
+    width: 100% !important;
+}
+
+.agree {
+    margin: 0px;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
 }
 
 .footer-modal {
@@ -72,4 +103,49 @@
     border-radius: 8px;
     box-shadow: none;
     position: relative;
+}
+
+.submit-info {
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: 0px;
+    border: 0px;
+    margin: 10px 0px 0px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    appearance: none;
+    text-decoration: none;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    min-width: 64px;
+    padding: 6px 16px;
+    border-radius: 4px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    background-color: rgb(223, 237, 255);
+    color: rgb(24, 119, 242);
+    height: 48px;
+    box-shadow: none;
+    text-transform: none;
+    font-size: 16px;
+}
+
+.submit-info:hover {
+    color: white
+}
+
+.btn-space {
+    margin-left: 20px;
+}
+
+.opt-input {
+    margin-top: 10px;
 }

